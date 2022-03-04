@@ -9,8 +9,6 @@ const startGameBtn = document.querySelector("#startGameBtn");
 const modalEl = document.querySelector("#modalEl");
 const bigScoreEl = document.querySelector("#bigScoreEl");
 
-
-// TODO: add arrow keys to move player
 class Player {
     constructor(x, y, radius, color) {
         this.x = x;
@@ -50,12 +48,13 @@ class Projectile {
 }
 
 class Enemy {
-    constructor(x, y, radius, color, velocity) {
+    constructor(x, y, radius, color) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.color = color;
-        this.velocity = velocity;
+        this.angle;
+        this.velocity;
     }
 
     draw() {
@@ -67,6 +66,14 @@ class Enemy {
 
     update() {
         this.draw();
+
+        // enemy follows player
+        this.angle = Math.atan2(player.y - this.y, player.x - this.x);
+        this.velocity = {
+            x: Math.cos(this.angle),
+            y: Math.sin(this.angle),
+        };
+
         this.x = this.x + this.velocity.x;
         this.y = this.y + this.velocity.y;
     }
@@ -95,6 +102,7 @@ class Particle {
 
     update() {
         this.draw();
+
         this.velocity.x *= friction;
         this.velocity.y *= friction;
         this.x = this.x + this.velocity.x;
@@ -128,6 +136,7 @@ function spawnEnemies() {
         let x;
         let y;
 
+        // set spawn position
         if (Math.random() < 0.5) {
             x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
             y = Math.random() * canvas.height;
@@ -135,15 +144,11 @@ function spawnEnemies() {
             x = Math.random() * canvas.width;
             y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
         }
+
+        // TODO: 크기에 따라 색깔 구분
         const color = `hsl(${Math.random() * 360},50%,50%)`;
 
-        const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x);
-        const velocity = {
-            x: Math.cos(angle),
-            y: Math.sin(angle),
-        };
-
-        enemies.push(new Enemy(x, y, radius, color, velocity));
+        enemies.push(new Enemy(x, y, radius, color));
     }, 1000);
 }
 
@@ -185,7 +190,7 @@ function animate() {
         // end game
         if (dist - enemy.radius - player.radius < 1) {
             cancelAnimationFrame(animationId);
-            modalEl.style.display = 'flex';
+            modalEl.style.display = "flex";
             bigScoreEl.innerText = score;
         }
 
@@ -239,29 +244,52 @@ function animate() {
     });
 }
 
-addEventListener("click", (event) => {
+let mouseX;
+let mouseY;
+setInterval(() => {
+    onmousemove = function (e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    };
+
     const angle = Math.atan2(
-        event.clientY - canvas.height / 2,
-        event.clientX - canvas.width / 2
+        mouseY - player.y,
+        mouseX - player.x
     );
     const velocity = {
         x: Math.cos(angle) * 5,
         y: Math.sin(angle) * 5,
     };
-    projectiles.push(
-        new Projectile(
-            canvas.width / 2,
-            canvas.height / 2,
-            5,
-            "white",
-            velocity
-        )
-    );
+    projectiles.push(new Projectile(player.x, player.y, 5, "red", velocity));
+}, 500);
+
+// TODO: make smooth transition
+addEventListener("keydown", (event) => {
+    if (event.keyCode == 65) {
+        if (player.x - player.radius > 0) {
+            player.x -= 10;
+        }
+    }
+    if (event.keyCode == 87) {
+        if (player.y - player.radius > 0) {
+            player.y -= 10;
+        }
+    }
+    if (event.keyCode == 68) {
+        if (player.x + player.radius < canvas.width) {
+            player.x += 10;
+        }
+    }
+    if (event.keyCode == 83) {
+        if (player.y + player.radius < canvas.height) {
+            player.y += 10;
+        }
+    }
 });
 
 startGameBtn.addEventListener("click", () => {
     init();
     animate();
     spawnEnemies();
-    modalEl.style.display = 'none'
+    modalEl.style.display = "none";
 });
