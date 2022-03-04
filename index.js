@@ -252,10 +252,7 @@ setInterval(() => {
         mouseY = e.clientY;
     };
 
-    const angle = Math.atan2(
-        mouseY - player.y,
-        mouseX - player.x
-    );
+    const angle = Math.atan2(mouseY - player.y, mouseX - player.x);
     const velocity = {
         x: Math.cos(angle) * 5,
         y: Math.sin(angle) * 5,
@@ -265,27 +262,66 @@ setInterval(() => {
 
 // TODO: make smooth transition
 addEventListener("keydown", (event) => {
+    // left(a)
     if (event.keyCode == 65) {
         if (player.x - player.radius > 0) {
             player.x -= 10;
         }
     }
+    // up(w)
     if (event.keyCode == 87) {
         if (player.y - player.radius > 0) {
             player.y -= 10;
         }
     }
+    // right(d)
     if (event.keyCode == 68) {
         if (player.x + player.radius < canvas.width) {
             player.x += 10;
         }
     }
+    // down(s)
     if (event.keyCode == 83) {
         if (player.y + player.radius < canvas.height) {
             player.y += 10;
         }
     }
 });
+
+// diagonal movement of player
+let keysdown = {};
+addEventListener(
+    "keydown",
+    function (evt) {
+        keysdown[evt.which] = true;
+        // up & left
+        if (keysdown["65"] === true && keysdown["87"] === true) {
+            player.x -= 10;
+            player.y -= 10;
+        // up & right
+        } else if (keysdown["68"] === true && keysdown["87"] === true) {
+            player.x += 10;
+            player.y -= 10;
+        // down and left
+        } else if (keysdown["65"] === true && keysdown["83"] === true) {
+            player.x -= 10;
+            player.y += 10;
+        // down and right
+        } else if (keysdown["68"] === true && keysdown["83"] === true) {
+            player.x += 10;
+            player.y += 10;
+        }
+    },
+    false
+);
+
+addEventListener(
+    "keyup",
+    function (evt) {
+        keysdown[evt.which] = false;
+    },
+    false
+);
 
 startGameBtn.addEventListener("click", () => {
     init();
