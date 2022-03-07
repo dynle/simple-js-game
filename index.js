@@ -131,6 +131,7 @@ function init() {
 
 function spawnEnemies() {
     setInterval(() => {
+        // radius between 4 and 30
         const radius = Math.random() * (30 - 4) + 4;
 
         let x;
@@ -145,8 +146,15 @@ function spawnEnemies() {
             y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
         }
 
-        // TODO: 크기에 따라 색깔 구분
-        const color = `hsl(${Math.random() * 360},50%,50%)`;
+        // radius determines color
+        let color;
+        if (radius < 10) {
+            color = `hsl(${240},50%,50%)`
+        } else if (radius < 20) {
+            color = `hsl(${120},50%,50%)`
+        } else {
+            color = `hsl(${360},50%,50%)`
+        }
 
         enemies.push(new Enemy(x, y, radius, color));
     }, 1000);
@@ -265,25 +273,29 @@ addEventListener("keydown", (event) => {
     // left(a)
     if (event.keyCode == 65) {
         if (player.x - player.radius > 0) {
-            player.x -= 10;
+            // player.x -= 10;
+            gsap.to(player, {x: player.x - 100,ease:'power4',duration:5});
         }
     }
     // up(w)
     if (event.keyCode == 87) {
         if (player.y - player.radius > 0) {
-            player.y -= 10;
+            // player.y -= 10;
+            gsap.to(player, {y: player.y - 100,ease:'power4',duration:5});
         }
     }
     // right(d)
     if (event.keyCode == 68) {
         if (player.x + player.radius < canvas.width) {
-            player.x += 10;
+            // player.x += 10;
+            gsap.to(player, {x: player.x + 100,ease:'power4',duration:5});
         }
     }
     // down(s)
     if (event.keyCode == 83) {
         if (player.y + player.radius < canvas.height) {
-            player.y += 10;
+            // player.y += 10;
+            gsap.to(player, {y: player.y + 100,ease:'power4',duration:5});
         }
     }
 });
@@ -292,24 +304,43 @@ addEventListener("keydown", (event) => {
 let keysdown = {};
 addEventListener(
     "keydown",
-    function (evt) {
-        keysdown[evt.which] = true;
+    function (event) {
+        keysdown[event.which] = true;
         // up & left
         if (keysdown["65"] === true && keysdown["87"] === true) {
-            player.x -= 10;
-            player.y -= 10;
+            if (player.x - player.radius > 0 && player.y - player.radius > 0){
+                // player.x -= 10;
+                // player.y -= 10;
+                gsap.to(player, {x: player.x - 100,ease:'power4',duration:5});
+                gsap.to(player, {y: player.y - 100,ease:'power4',duration:5});
+            }
+        }
         // up & right
-        } else if (keysdown["68"] === true && keysdown["87"] === true) {
-            player.x += 10;
-            player.y -= 10;
+        if (keysdown["68"] === true && keysdown["87"] === true) {
+            if(player.y - player.radius > 0 && player.x + player.radius < canvas.width){
+                // player.x += 10;
+                // player.y -= 10;
+                gsap.to(player, {x: player.x + 100,ease:'power4',duration:5});
+                gsap.to(player, {y: player.y - 100,ease:'power4',duration:5});
+            }
+        }
         // down and left
-        } else if (keysdown["65"] === true && keysdown["83"] === true) {
-            player.x -= 10;
-            player.y += 10;
+        if (keysdown["65"] === true && keysdown["83"] === true) {
+            if(player.x - player.radius > 0 && player.y + player.radius < canvas.height){
+                // player.x -= 10;
+                // player.y += 10;
+                gsap.to(player, {x: player.x - 100,ease:'power4',duration:5});
+                gsap.to(player, {y: player.y + 100,ease:'power4',duration:5});
+            }
+        }
         // down and right
-        } else if (keysdown["68"] === true && keysdown["83"] === true) {
-            player.x += 10;
-            player.y += 10;
+        if (keysdown["68"] === true && keysdown["83"] === true) {
+            if(player.x + player.radius < canvas.width && player.y + player.radius < canvas.height){
+                // player.x += 10;
+                // player.y += 10;
+                gsap.to(player, {x: player.x + 100,ease:'power4',duration:5});
+                gsap.to(player, {y: player.y + 100,ease:'power4',duration:5});
+            }
         }
     },
     false
@@ -317,8 +348,8 @@ addEventListener(
 
 addEventListener(
     "keyup",
-    function (evt) {
-        keysdown[evt.which] = false;
+    function (event) {
+        keysdown[event.which] = false;
     },
     false
 );
