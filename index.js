@@ -268,34 +268,30 @@ setInterval(() => {
     projectiles.push(new Projectile(player.x, player.y, 5, "red", velocity));
 }, 500);
 
-// TODO: make smooth transition
+// TODO: 플레이어는 가운데 놓고 모든 적들의 x,y 좌표가 변경
 addEventListener("keydown", (event) => {
     // left(a)
     if (event.keyCode == 65) {
-        if (player.x - player.radius > 0) {
-            // player.x -= 10;
-            gsap.to(player, {x: player.x - 100,ease:'power4',duration:5});
+        if (player.x - player.radius > 100) {
+            gsap.to(player, {x: player.x - 100,ease:'power4',duration:2});
         }
     }
     // up(w)
     if (event.keyCode == 87) {
-        if (player.y - player.radius > 0) {
-            // player.y -= 10;
-            gsap.to(player, {y: player.y - 100,ease:'power4',duration:5});
+        if (player.y - player.radius > 100) {
+            gsap.to(player, {y: player.y - 100,ease:'power4',duration:2});
         }
     }
     // right(d)
     if (event.keyCode == 68) {
-        if (player.x + player.radius < canvas.width) {
-            // player.x += 10;
-            gsap.to(player, {x: player.x + 100,ease:'power4',duration:5});
+        if (player.x + player.radius < canvas.width - 100) {
+            gsap.to(player, {x: player.x + 100,ease:'power4',duration:2});
         }
     }
     // down(s)
     if (event.keyCode == 83) {
-        if (player.y + player.radius < canvas.height) {
-            // player.y += 10;
-            gsap.to(player, {y: player.y + 100,ease:'power4',duration:5});
+        if (player.y + player.radius < canvas.height - 100) {
+            gsap.to(player, {y: player.y + 100,ease:'power4',duration:2});
         }
     }
 });
@@ -308,38 +304,30 @@ addEventListener(
         keysdown[event.which] = true;
         // up & left
         if (keysdown["65"] === true && keysdown["87"] === true) {
-            if (player.x - player.radius > 0 && player.y - player.radius > 0){
-                // player.x -= 10;
-                // player.y -= 10;
-                gsap.to(player, {x: player.x - 100,ease:'power4',duration:5});
-                gsap.to(player, {y: player.y - 100,ease:'power4',duration:5});
+            if (player.x - player.radius > 100 && player.y - player.radius > 100){
+                gsap.to(player, {x: player.x - 100,ease:'power4',duration:2});
+                gsap.to(player, {y: player.y - 100,ease:'power4',duration:2});
             }
         }
         // up & right
         if (keysdown["68"] === true && keysdown["87"] === true) {
-            if(player.y - player.radius > 0 && player.x + player.radius < canvas.width){
-                // player.x += 10;
-                // player.y -= 10;
-                gsap.to(player, {x: player.x + 100,ease:'power4',duration:5});
-                gsap.to(player, {y: player.y - 100,ease:'power4',duration:5});
+            if(player.y - player.radius > 100 && player.x + player.radius < canvas.width - 100){
+                gsap.to(player, {x: player.x + 100,ease:'power4',duration:2});
+                gsap.to(player, {y: player.y - 100,ease:'power4',duration:2});
             }
         }
         // down and left
         if (keysdown["65"] === true && keysdown["83"] === true) {
-            if(player.x - player.radius > 0 && player.y + player.radius < canvas.height){
-                // player.x -= 10;
-                // player.y += 10;
-                gsap.to(player, {x: player.x - 100,ease:'power4',duration:5});
-                gsap.to(player, {y: player.y + 100,ease:'power4',duration:5});
+            if(player.x - player.radius > 100 && player.y + player.radius < canvas.height - 100){
+                gsap.to(player, {x: player.x - 100,ease:'power4',duration:2});
+                gsap.to(player, {y: player.y + 100,ease:'power4',duration:2});
             }
         }
         // down and right
         if (keysdown["68"] === true && keysdown["83"] === true) {
-            if(player.x + player.radius < canvas.width && player.y + player.radius < canvas.height){
-                // player.x += 10;
-                // player.y += 10;
-                gsap.to(player, {x: player.x + 100,ease:'power4',duration:5});
-                gsap.to(player, {y: player.y + 100,ease:'power4',duration:5});
+            if(player.x + player.radius < canvas.width - 100 && player.y + player.radius < canvas.height - 100){
+                gsap.to(player, {x: player.x + 100,ease:'power4',duration:2});
+                gsap.to(player, {y: player.y + 100,ease:'power4',duration:2});
             }
         }
     },
