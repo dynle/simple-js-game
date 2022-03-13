@@ -55,6 +55,11 @@ class Enemy {
         this.color = color;
         this.angle;
         this.velocity;
+
+        this.up = false;
+        this.right = false;
+        this.down = false;
+        this.left = false;
     }
 
     draw() {
@@ -65,6 +70,7 @@ class Enemy {
     }
 
     update() {
+        console.log("update")
         this.draw();
 
         // enemy follows player
@@ -76,6 +82,52 @@ class Enemy {
 
         this.x = this.x + this.velocity.x;
         this.y = this.y + this.velocity.y;
+    }
+
+    // TODO: 배경화면도 대충 설정해서 움직이기
+    move() {
+        document.addEventListener('keydown',(e) => {
+            if (e.keyCode === 87 /* w */){
+                this.up = true
+            }
+            if (e.keyCode === 68 /* d */){
+                this.right = true
+            }
+            if (e.keyCode === 83 /* s */){
+                this.down = true
+            }
+            if (e.keyCode === 65 /* a */){
+                this.left = true
+            }
+        })
+
+        document.addEventListener('keyup',(e) => {
+            if (e.keyCode === 87 /* w */){
+                this.up = false
+            }
+            if (e.keyCode === 68 /* d */){
+                this.right = false
+            }
+            if (e.keyCode === 83 /* s */){
+                this.down = false
+            }
+            if (e.keyCode === 65 /* a */){
+                this.left = false
+            }
+        })
+
+        if (this.up){
+            gsap.to(this, { y: this.y + 30, ease: "power4", duration: 2 });
+        }
+        if (this.right){
+            gsap.to(this, { x: this.x - 30, ease: "power4", duration: 2 });
+        }
+        if (this.down){
+            gsap.to(this, { y: this.y - 30, ease: "power4", duration: 2 });
+        }
+        if (this.left){
+            gsap.to(this, { x: this.x + 30, ease: "power4", duration: 2 });
+        }
     }
 }
 
@@ -149,11 +201,11 @@ function spawnEnemies() {
         // radius determines color
         let color;
         if (radius < 10) {
-            color = `hsl(${240},50%,50%)`
+            color = `hsl(${240},50%,50%)`;
         } else if (radius < 20) {
-            color = `hsl(${120},50%,50%)`
+            color = `hsl(${120},50%,50%)`;
         } else {
-            color = `hsl(${360},50%,50%)`
+            color = `hsl(${360},50%,50%)`;
         }
 
         enemies.push(new Enemy(x, y, radius, color));
@@ -191,6 +243,7 @@ function animate() {
     });
 
     enemies.forEach((enemy, index) => {
+        enemy.move();
         enemy.update();
 
         const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
@@ -260,87 +313,19 @@ setInterval(() => {
         mouseY = e.clientY;
     };
 
-    const angle = Math.atan2(mouseY - player.y, mouseX - player.x);
+    // const angle = Math.atan2(mouseY - player.y, mouseX - player.x);
+    const angle = Math.atan2(
+        mouseY - canvas.height / 2,
+        mouseX - canvas.width / 2
+    );
     const velocity = {
         x: Math.cos(angle) * 5,
         y: Math.sin(angle) * 5,
     };
-    projectiles.push(new Projectile(player.x, player.y, 5, "red", velocity));
+    projectiles.push(
+        new Projectile(canvas.width / 2, canvas.height / 2, 5, "red", velocity)
+    );
 }, 500);
-
-// TODO: 플레이어는 가운데 놓고 모든 적들의 x,y 좌표가 변경
-addEventListener("keydown", (event) => {
-    // left(a)
-    if (event.keyCode == 65) {
-        if (player.x - player.radius > 100) {
-            gsap.to(player, {x: player.x - 100,ease:'power4',duration:2});
-        }
-    }
-    // up(w)
-    if (event.keyCode == 87) {
-        if (player.y - player.radius > 100) {
-            gsap.to(player, {y: player.y - 100,ease:'power4',duration:2});
-        }
-    }
-    // right(d)
-    if (event.keyCode == 68) {
-        if (player.x + player.radius < canvas.width - 100) {
-            gsap.to(player, {x: player.x + 100,ease:'power4',duration:2});
-        }
-    }
-    // down(s)
-    if (event.keyCode == 83) {
-        if (player.y + player.radius < canvas.height - 100) {
-            gsap.to(player, {y: player.y + 100,ease:'power4',duration:2});
-        }
-    }
-});
-
-// diagonal movement of player
-let keysdown = {};
-addEventListener(
-    "keydown",
-    function (event) {
-        keysdown[event.which] = true;
-        // up & left
-        if (keysdown["65"] === true && keysdown["87"] === true) {
-            if (player.x - player.radius > 100 && player.y - player.radius > 100){
-                gsap.to(player, {x: player.x - 100,ease:'power4',duration:2});
-                gsap.to(player, {y: player.y - 100,ease:'power4',duration:2});
-            }
-        }
-        // up & right
-        if (keysdown["68"] === true && keysdown["87"] === true) {
-            if(player.y - player.radius > 100 && player.x + player.radius < canvas.width - 100){
-                gsap.to(player, {x: player.x + 100,ease:'power4',duration:2});
-                gsap.to(player, {y: player.y - 100,ease:'power4',duration:2});
-            }
-        }
-        // down and left
-        if (keysdown["65"] === true && keysdown["83"] === true) {
-            if(player.x - player.radius > 100 && player.y + player.radius < canvas.height - 100){
-                gsap.to(player, {x: player.x - 100,ease:'power4',duration:2});
-                gsap.to(player, {y: player.y + 100,ease:'power4',duration:2});
-            }
-        }
-        // down and right
-        if (keysdown["68"] === true && keysdown["83"] === true) {
-            if(player.x + player.radius < canvas.width - 100 && player.y + player.radius < canvas.height - 100){
-                gsap.to(player, {x: player.x + 100,ease:'power4',duration:2});
-                gsap.to(player, {y: player.y + 100,ease:'power4',duration:2});
-            }
-        }
-    },
-    false
-);
-
-addEventListener(
-    "keyup",
-    function (event) {
-        keysdown[event.which] = false;
-    },
-    false
-);
 
 startGameBtn.addEventListener("click", () => {
     init();
