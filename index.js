@@ -55,11 +55,6 @@ class Enemy {
         this.color = color;
         this.angle;
         this.velocity;
-
-        this.up = false;
-        this.right = false;
-        this.down = false;
-        this.left = false;
     }
 
     draw() {
@@ -70,63 +65,30 @@ class Enemy {
     }
 
     update() {
-        console.log("update")
         this.draw();
 
         // enemy follows player
+        // TODO: 각 enemy의 벨로시티에 따라서 움직이게 하기
         this.angle = Math.atan2(player.y - this.y, player.x - this.x);
         this.velocity = {
-            x: Math.cos(this.angle),
-            y: Math.sin(this.angle),
+            x: Math.cos(this.angle)*2,
+            y: Math.sin(this.angle)*2,
         };
 
         this.x = this.x + this.velocity.x;
         this.y = this.y + this.velocity.y;
-    }
 
-    // TODO: 배경화면도 대충 설정해서 움직이기
-    move() {
-        document.addEventListener('keydown',(e) => {
-            if (e.keyCode === 87 /* w */){
-                this.up = true
-            }
-            if (e.keyCode === 68 /* d */){
-                this.right = true
-            }
-            if (e.keyCode === 83 /* s */){
-                this.down = true
-            }
-            if (e.keyCode === 65 /* a */){
-                this.left = true
-            }
-        })
-
-        document.addEventListener('keyup',(e) => {
-            if (e.keyCode === 87 /* w */){
-                this.up = false
-            }
-            if (e.keyCode === 68 /* d */){
-                this.right = false
-            }
-            if (e.keyCode === 83 /* s */){
-                this.down = false
-            }
-            if (e.keyCode === 65 /* a */){
-                this.left = false
-            }
-        })
-
-        if (this.up){
-            gsap.to(this, { y: this.y + 30, ease: "power4", duration: 2 });
+        if (up){
+            gsap.to(this, { y: this.y + this.velocity.y + player_velocity, ease: "power3", duration: 0 });
         }
-        if (this.right){
-            gsap.to(this, { x: this.x - 30, ease: "power4", duration: 2 });
+        if (right){
+            gsap.to(this, { x: this.x + this.velocity.x - player_velocity, ease: "power3", duration: 0 });
         }
-        if (this.down){
-            gsap.to(this, { y: this.y - 30, ease: "power4", duration: 2 });
+        if (down){
+            gsap.to(this, { y: this.y + this.velocity.y - player_velocity, ease: "power3", duration: 0 });
         }
-        if (this.left){
-            gsap.to(this, { x: this.x + 30, ease: "power4", duration: 2 });
+        if (left){
+            gsap.to(this, { x: this.x + this.velocity.x + player_velocity, ease: "power3", duration: 0 });
         }
     }
 }
@@ -166,11 +128,11 @@ class Particle {
 const x = canvas.width / 2;
 const y = canvas.height / 2;
 
-let player = new Player(x, y, 10, "white");
+let player;
+let player_velocity = 5;
 let projectiles = [];
 let enemies = [];
 let particles = [];
-
 function init() {
     player = new Player(x, y, 10, "white");
     projectiles = [];
@@ -243,7 +205,6 @@ function animate() {
     });
 
     enemies.forEach((enemy, index) => {
-        enemy.move();
         enemy.update();
 
         const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
@@ -313,7 +274,6 @@ setInterval(() => {
         mouseY = e.clientY;
     };
 
-    // const angle = Math.atan2(mouseY - player.y, mouseX - player.x);
     const angle = Math.atan2(
         mouseY - canvas.height / 2,
         mouseX - canvas.width / 2
@@ -327,9 +287,51 @@ setInterval(() => {
     );
 }, 500);
 
+let up;
+let down;
+let left;
+let right;
+function move(){
+    up = false;
+    down = false;
+    left = false;
+    right = false;
+
+    document.addEventListener('keydown',(e) => {
+        if (e.keyCode === 87 /* w */){
+            up = true
+        }
+        if (e.keyCode === 68 /* d */){
+            right = true
+        }
+        if (e.keyCode === 83 /* s */){
+            down = true
+        }
+        if (e.keyCode === 65 /* a */){
+            left = true
+        }
+    })
+
+    document.addEventListener('keyup',(e) => {
+        if (e.keyCode === 87 /* w */){
+            up = false
+        }
+        if (e.keyCode === 68 /* d */){
+            right = false
+        }
+        if (e.keyCode === 83 /* s */){
+            down = false
+        }
+        if (e.keyCode === 65 /* a */){
+            left = false
+        }
+    })
+}
+
 startGameBtn.addEventListener("click", () => {
     init();
     animate();
     spawnEnemies();
+    move();
     modalEl.style.display = "none";
 });
