@@ -69,26 +69,66 @@ class Enemy {
 
         // enemy follows player
         // TODO: 각 enemy의 벨로시티에 따라서 움직이게 하기
-        this.angle = Math.atan2(player.y - this.y, player.x - this.x);
+
+        // if(this.x < player.x) {
+        //     this.x = this.x + this.velocity;
+        // }
+        // if(this.x > player.x) {
+        //     this.x = this.x - this.velocity;
+        // }
+        // if(this.y < player.y) {
+        //     this.y = this.y + this.velocity;
+        // }
+        // if(this.y > player.y) {
+        //     this.y = this.y - this.velocity;
+        // }
+
+        // this.x = this.x + this.velocity.x;
+        // this.y = this.y + this.velocity.y;
+
+        this.angle = Math.atan2(canvas.height / 2 - this.y, canvas.width / 2 - this.x);
+
         this.velocity = {
-            x: Math.cos(this.angle)*2,
-            y: Math.sin(this.angle)*2,
-        };
+            x: Math.cos(this.angle),
+            y: Math.sin(this.angle)
+        }
 
-        this.x = this.x + this.velocity.x;
-        this.y = this.y + this.velocity.y;
+        if(!up&&!down&&!left&&!right) {
+            this.x = this.x + this.velocity.x;
+            this.y = this.y + this.velocity.y;
+        }
 
-        if (up){
-            gsap.to(this, { y: this.y + this.velocity.y + player_velocity, ease: "power3", duration: 0 });
+        if (up) {
+            gsap.to(this, {
+                y: this.y + this.velocity.y + player_velocity,
+                x: this.x + this.velocity.x,
+                ease: "power3",
+                duration: 0,
+            });
         }
-        if (right){
-            gsap.to(this, { x: this.x + this.velocity.x - player_velocity, ease: "power3", duration: 0 });
+        if (right) {
+            gsap.to(this, {
+                x: this.x + this.velocity.x - player_velocity,
+                y: this.y + this.velocity.y,
+                ease: "power3",
+                duration: 0,
+            });
         }
-        if (down){
-            gsap.to(this, { y: this.y + this.velocity.y - player_velocity, ease: "power3", duration: 0 });
+        if (down) {
+            gsap.to(this, {
+                y: this.y + this.velocity.y - player_velocity,
+                x: this.x + this.velocity.x,
+                ease: "power3",
+                duration: 0,
+            });
         }
-        if (left){
-            gsap.to(this, { x: this.x + this.velocity.x + player_velocity, ease: "power3", duration: 0 });
+        if (left) {
+            gsap.to(this, {
+                x: this.x + this.velocity.x + player_velocity,
+                y: this.y + this.velocity.y,
+                ease: "power3",
+                duration: 0,
+            });
         }
     }
 }
@@ -129,7 +169,7 @@ const x = canvas.width / 2;
 const y = canvas.height / 2;
 
 let player;
-let player_velocity = 5;
+let player_velocity = 4;
 let projectiles = [];
 let enemies = [];
 let particles = [];
@@ -170,6 +210,13 @@ function spawnEnemies() {
             color = `hsl(${360},50%,50%)`;
         }
 
+        // const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x);
+        // const velocity = Math.random() * (3 - 1) + 1;
+        // const velocity = 2;
+        // const velocity = {
+        //     x: Math.cos(angle),
+        //     y: Math.sin(angle)
+        // }
         enemies.push(new Enemy(x, y, radius, color));
     }, 1000);
 }
@@ -291,41 +338,41 @@ let up;
 let down;
 let left;
 let right;
-function move(){
+function move() {
     up = false;
     down = false;
     left = false;
     right = false;
 
-    document.addEventListener('keydown',(e) => {
-        if (e.keyCode === 87 /* w */){
-            up = true
+    document.addEventListener("keydown", (e) => {
+        if (e.keyCode === 87 /* w */) {
+            up = true;
         }
-        if (e.keyCode === 68 /* d */){
-            right = true
+        if (e.keyCode === 68 /* d */) {
+            right = true;
         }
-        if (e.keyCode === 83 /* s */){
-            down = true
+        if (e.keyCode === 83 /* s */) {
+            down = true;
         }
-        if (e.keyCode === 65 /* a */){
-            left = true
+        if (e.keyCode === 65 /* a */) {
+            left = true;
         }
-    })
+    });
 
-    document.addEventListener('keyup',(e) => {
-        if (e.keyCode === 87 /* w */){
-            up = false
+    document.addEventListener("keyup", (e) => {
+        if (e.keyCode === 87 /* w */) {
+            up = false;
         }
-        if (e.keyCode === 68 /* d */){
-            right = false
+        if (e.keyCode === 68 /* d */) {
+            right = false;
         }
-        if (e.keyCode === 83 /* s */){
-            down = false
+        if (e.keyCode === 83 /* s */) {
+            down = false;
         }
-        if (e.keyCode === 65 /* a */){
-            left = false
+        if (e.keyCode === 65 /* a */) {
+            left = false;
         }
-    })
+    });
 }
 
 startGameBtn.addEventListener("click", () => {
