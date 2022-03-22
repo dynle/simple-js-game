@@ -68,7 +68,6 @@ class Enemy {
         this.draw();
 
         // enemy follows player
-        // TODO: 각 enemy의 벨로시티에 따라서 움직이게 하기
 
         // if(this.x < player.x) {
         //     this.x = this.x + this.velocity;
@@ -101,7 +100,7 @@ class Enemy {
         if (up) {
             gsap.to(this, {
                 y: this.y + this.velocity.y + player_velocity,
-                x: this.x + this.velocity.x,
+                x: this.x + this.velocity.x*3,
                 ease: "power3",
                 duration: 0,
             });
@@ -109,7 +108,7 @@ class Enemy {
         if (right) {
             gsap.to(this, {
                 x: this.x + this.velocity.x - player_velocity,
-                y: this.y + this.velocity.y,
+                y: this.y + this.velocity.y*3,
                 ease: "power3",
                 duration: 0,
             });
@@ -117,7 +116,7 @@ class Enemy {
         if (down) {
             gsap.to(this, {
                 y: this.y + this.velocity.y - player_velocity,
-                x: this.x + this.velocity.x,
+                x: this.x + this.velocity.x*3,
                 ease: "power3",
                 duration: 0,
             });
@@ -125,7 +124,7 @@ class Enemy {
         if (left) {
             gsap.to(this, {
                 x: this.x + this.velocity.x + player_velocity,
-                y: this.y + this.velocity.y,
+                y: this.y + this.velocity.y*3,
                 ease: "power3",
                 duration: 0,
             });
@@ -169,7 +168,7 @@ const x = canvas.width / 2;
 const y = canvas.height / 2;
 
 let player;
-let player_velocity = 4;
+let player_velocity = 2;
 let projectiles = [];
 let enemies = [];
 let particles = [];
