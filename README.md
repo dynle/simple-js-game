@@ -1,4 +1,4 @@
-:warning: Files are updated this repository but repository moved to [here](https://github.com/junseuk/SimpleJSGame/).
+:warning: Files are updated in this repository but repository moved to [here](https://github.com/junseuk/SimpleJSGame/).
 
 # Simple JS Game (Shooting Game)
 
