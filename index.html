@@ -1,31 +1,179 @@
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-    body {
-        margin: 0;
-        background: black;
-    }
-</style>
-<div class="fixed text-white text-sm ml-2 mt-1 select-none">
-    <span>Score: </span>
-    <span id="scoreEl">0</span>
-</div>
-<div class="fixed inset-0 flex items-center justify-center" id="modalEl">
-    <div class="bg-white max-w-md w-full p-6 text-center">
-        <h1 class="text-4xl font-bold leading-none" id="bigScoreEl">0</h1>
-        <p class="text-sm text-gray-700 mb-4">Points</p>
-        <button
-            class="bg-blue-500 text-white w-full py-3 rounded-full text-sm"
-            id="startGameBtn"
-        >
-            Start Game
-        </button>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Space Shots</title>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="./index.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <!-- socre on the top left -->
+    <div class="fixed text-white text-sm ml-2 mt-1 select-none">
+      <span>Score </span>
+      <span id="score">0</span>
     </div>
-</div>
-<canvas></canvas>
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
-    integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-></script>
-<script src="./index.js"></script>
+    <!-- initial modal -->
+    <div class="fixed inset-0 flex items-center justify-center" id="init-modal">
+      <div class="bg-white max-w-xl w-full p-6 text-center">
+        <h1 class="text-5xl font-bold leading-none">Space Shots</h1>
+        <div class="flex justify-center pt-10">
+          <div class="pr-10">
+            <img class="object-cover h-40 w-50" src="./assets/wasd.png">
+            <p class="text-sm text-gray-700">Use WASD to move a player </p>
+          </div>
+          <div class="-mt-5">
+            <img class="object-cover h-40 w-40" src="./assets/cursor.png">
+            <p class="text-sm text-gray-700 mt-5">Move CURSOR to attack</p>
+          </div>
+        </div>
+        <div>
+          <button class="bg-blue-500 text-white w-full py-3 rounded-full text-sm mt-10" id="start-game-btn">Start Game</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- result modal -->
+    <div class="fixed inset-0 flex items-center justify-center hidden" id="result-modal">
+      <div class="bg-white shadow-md rounded max-w-xl w-full p-6 text-center">
+        <h1 class="text-orange-500 text-6xl font-bold leading-none" id="score2">0</h1>
+        <p class="text-lg text-gray-700 mb-4">Points</p>
+        <form class="bg-white shadow rounded px-8 pt-2 mb-4">
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+              User Name
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username">
+          </div>
+          <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="text">
+              Comment
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="comment" type="text" placeholder="Comment">
+          </div>
+        </form>
+        <div>
+          <button class="bg-blue-500 text-white w-full py-3 rounded-full text-sm" id="submit-score-btn">Submit</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- upgrade modal -->
+    <div class="fixed inset-0 flex items-center justify-center hidden" id="upgrade-modal">
+      <div class="bg-white max-w-md w-full p-6 text-center">
+        <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Click to upgrade</h2>
+        <p class="mt-2 mb-10 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Upgrade Time!</p>
+        <div class="relative upgrade-box" id="upgrade-power">
+          <dt>
+            <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+              </svg>
+            </div>
+            <p class="text-lg m-1 h-12 font-medium flex items-center justify-center text-gray-900">Power Up</p>
+          </dt>
+        </div>
+        <div class="relative upgrade-box" id="upgrade-speed">
+          <dt>
+            <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+              </svg>
+            </div>
+            <p class="text-lg mt-6 h-12 hover:bg-violet-600 font-medium flex items-center justify-center text-gray-900">Speed Up</p>
+          </dt>
+        </div>
+        <div class="relative upgrade-box" id="upgrade-freq-projectile">
+          <dt>
+            <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+              </svg>
+            </div>
+            <p class="text-lg mt-6 h-12 font-medium flex items-center justify-center text-gray-900">Frequency Up</p>
+          </dt>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ranking modal -->
+  <div class="fixed inset-0 flex items-center justify-center" id="ranking-modal" style="display: none;">
+    <div class="bg-white max-w-md w-full p-6 text-center">
+      <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Thanks for playing!</h2>
+      <p class="mt-2 mb-10 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Ranking!</p>
+      <div class="flex flex-col">
+        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+            <div class="overflow-hidden">
+              <table class="min-w-full" id="score-table">
+                <thead class="bg-white border-b">
+                  <tr>
+                    <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
+                      #
+                    </th>
+                    <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
+                      Name
+                    </th>
+                    <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
+                      Score
+                    </th>
+                    <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
+                      Comment
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap" id="first-name">
+                      JunSeuk
+                    </td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap" id="first-score">
+                      100
+                    </td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap" id="first-comment">
+                      EZPZ
+                    </td>
+                  </tr>
+                  <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">2</td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap" id="second-name">
+                      DY
+                    </td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap" id="second-score">
+                      90
+                    </td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap" id="second-comment">
+                      NOTBAD
+                    </td>
+                  </tr>
+                  <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">3</td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap" id="third-name">
+                      PERSON
+                    </td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap" id="third-score">
+                      2
+                    </td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap" id="third-comment">
+                      NOTHING
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="mt-4 mb-2 leading-8 font-bold tracking-tight text-gray-900" id="my-ranking">you took 5th place!</p>
+      <button class="bg-blue-500 text-white w-full py-3 rounded-full text-sm" id="start-game-btn">Replay</button>
+    </div>
+  </div>
+  <canvas></canvas>
+</body>
+<script type="module" src="./firebase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js" integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module" src="./index.js"></script>
+</html>
